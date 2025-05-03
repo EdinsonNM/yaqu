@@ -3,7 +3,7 @@ import { Suspense, lazy } from "react";
 import { ProtectedRoute } from "@presentation/components/molecules/protected-route/protected-route";
 import { AuthProvider } from "@presentation/utils/contexts/auth/auth.context";
 import { Loading } from "@presentation/components/atoms/loading/loading";
-import { ForbiddenPage } from "@presentation/pages/unauthenticated/forbidden/forbidden.page";
+import { ForbiddenPage } from "@presentation/components/templates/forbidden/forbidden.page";
 import { RoleName } from "@domain/authentication/enums/role.enum";
 
 const Login = lazy(

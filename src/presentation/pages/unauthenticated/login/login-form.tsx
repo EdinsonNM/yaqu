@@ -1,6 +1,4 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import Button from "@presentation/design/atoms/button/button";
-import { TextInput } from "flowbite-react";
 import { HiEye, HiEyeOff, HiUser } from "react-icons/hi";
 import {
   FaWhatsapp,
@@ -8,7 +6,7 @@ import {
   FaFacebook,
   FaLinkedin,
 } from "react-icons/fa";
-import HelperError from "@presentation/design/atoms/helper-error/helper-error";
+import HelperError from "@presentation/components/atoms/helper-error/helper-error";
 import { useEffect, useState } from "react";
 import { useLogin } from "@infra/authentication/use-login";
 import { useAuth } from "@presentation/utils/hooks/use-auth";
@@ -18,6 +16,10 @@ import useAuthStore from "@presentation/store/auth-store";
 import { UserSession } from "@domain/authentication/models/user-session";
 import { loginSchema } from "./login.schema";
 import { toast } from "react-toastify";
+import { Button } from "@/components/ui/button";
+import TextField from "@presentation/design/atoms/textfield/textfield";
+import { Input } from "@/components/ui/input";
+import { Loader2 } from "lucide-react";
 
 export default function LoginForm() {
   const {
@@ -97,16 +99,11 @@ export default function LoginForm() {
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Identificación
           </label>
-          <TextInput
-            data-test="username"
-            id="username"
+          <Input
             type="text"
-            icon={HiUser}
             placeholder="Ingrese su identificación"
             {...register("username")}
-            color={errors.username ? "failure" : "gray"}
-            helperText={<HelperError error={errors.username} />}
-            className="w-full"
+            {...(errors.username && { error: errors.username })}
           />
         </div>
 
@@ -114,45 +111,28 @@ export default function LoginForm() {
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Contraseña
           </label>
-          <TextInput
-            data-test="password"
-            id="password"
+          <Input
             type={showPassword ? "text" : "password"}
             placeholder="Ingrese su contraseña"
             {...register("password")}
-            color={errors.password ? "failure" : "gray"}
-            helperText={<HelperError error={errors.password} />}
-            className="w-full"
-            addon={
-              showPassword ? (
-                <HiEye onClick={onTogglePassword} className="cursor-pointer" />
-              ) : (
-                <HiEyeOff
-                  onClick={onTogglePassword}
-                  className="cursor-pointer"
-                />
-              )
-            }
+            {...(errors.password && { error: errors.password })}
           />
         </div>
 
         <div className="mb-4">
           <Button
             type="submit"
-            isProcessing={isPending}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md"
+            className="px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 w-full"
           >
+            {isPending && <Loader2 className="animate-spin" />}
             Ingresar
           </Button>
         </div>
 
         <div className="text-center mb-2">
-          <Link
-            to={"forgot-password"}
-            className="text-sm text-blue-600 hover:underline"
-          >
+          <Button variant="link" onClick={() => navigate("/forgot-password")}>
             Olvidé mi contraseña
-          </Link>
+          </Button>
         </div>
 
         <div className="flex justify-center space-x-5 mt-6">
