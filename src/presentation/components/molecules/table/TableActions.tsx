@@ -1,12 +1,12 @@
-import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { DropdownMenuItem } from "@/presentation/components/ui/dropdown-menu";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/presentation/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuLabel,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@/presentation/components/ui/dropdown-menu";
 import { MoreHorizontal } from "lucide-react";
 
 export type TableActionsObject<T> = {

@@ -1,7 +1,7 @@
 import { ToastContainer } from "react-toastify";
 import { AppRoute } from "./app.route";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { ThemeProvider } from "@/components/ui/theme-provider";
+import { ThemeProvider } from "@/presentation/components/ui/theme-provider";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { queryClient } from "./config/tanstack.config";
 

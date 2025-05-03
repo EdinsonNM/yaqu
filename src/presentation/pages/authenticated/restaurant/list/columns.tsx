@@ -1,7 +1,7 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Checkbox } from "@/presentation/components/ui/checkbox";
 import { DataTableColumnHeader } from "@presentation/components/molecules/table/DataTableColumnHeader";
 import {
   TableActions,

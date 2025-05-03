@@ -20,12 +20,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "@/presentation/components/ui/table";
 import { useState } from "react";
-import { Input } from "@/components/ui/input";
+import { Input } from "@/presentation/components/ui/input";
 import { DataTablePagination } from "@presentation/components/molecules/table/DataTablePaginationProps";
 import { DataTableViewOptions } from "@presentation/components/molecules/table/DataTableViewOptions";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/presentation/components/ui/button";
 import { Plus } from "lucide-react";
 
 interface DataTableProps<TData, TValue> {

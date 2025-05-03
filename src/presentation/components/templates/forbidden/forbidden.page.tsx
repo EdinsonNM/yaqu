@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Ban } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Button } from "@/presentation/components/ui/button";
+import { Card } from "@/presentation/components/ui/card";
 import { useLogout } from "@/infra/authentication/use.logout";
 
 export const ForbiddenPage = () => {
@@ -10,7 +10,7 @@ export const ForbiddenPage = () => {
 
   const handleLogout = async () => {
     await logout();
-    navigate('/login');
+    navigate("/login");
   };
 
   return (
@@ -20,7 +20,7 @@ export const ForbiddenPage = () => {
           <div className="p-3 bg-destructive/10 rounded-full">
             <Ban className="h-12 w-12 text-destructive" />
           </div>
-          
+
           <div className="space-y-2">
             <h1 className="text-3xl font-bold tracking-tighter text-destructive">
               Acceso Denegado

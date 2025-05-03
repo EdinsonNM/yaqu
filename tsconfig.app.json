@@ -31,7 +31,7 @@
       "@presentation/*": ["./src/presentation/*"],
       "@main/*": ["./src/main/*"],
       "@components/*": ["./src/presentation/components/*"],
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*", "./src/presentation/*"]
     }
   },
   "include": ["src"]

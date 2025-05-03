@@ -1,4 +1,7 @@
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import {
+  SidebarInset,
+  SidebarProvider,
+} from "@/presentation/components/ui/sidebar";
 //import SidebarMenu from "./components/sidebar";
 
 import { SiteHeader } from "./components/site-header";

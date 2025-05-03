@@ -8,7 +8,11 @@ import {
   UserCircleIcon,
 } from "lucide-react";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/presentation/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,13 +21,13 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@/presentation/components/ui/dropdown-menu";
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@/components/ui/sidebar";
+} from "@/presentation/components/ui/sidebar";
 import { useLogout } from "@infra/authentication/use.logout";
 import { useAuth } from "@presentation/utils/hooks/use-auth";
 import { useNavigate } from "react-router-dom";

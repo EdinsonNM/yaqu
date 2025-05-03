@@ -1,6 +1,6 @@
 "use client";
 
-import { MailIcon, PlusCircleIcon, type LucideIcon } from "lucide-react";
+import { PlusCircleIcon, type LucideIcon } from "lucide-react";
 
 import {
   SidebarGroup,
@@ -8,7 +8,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar";
+} from "@/presentation/components/ui/sidebar";
 import { useNavigate } from "react-router-dom";
 
 export function NavMain({

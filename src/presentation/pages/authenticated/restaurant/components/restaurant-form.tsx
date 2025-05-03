@@ -3,8 +3,8 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+} from "@/presentation/components/ui/dialog";
+import { Button } from "@/presentation/components/ui/button";
 import { useForm } from "react-hook-form";
 import { Restaurant } from "@domain/restaurant/models/restaurant.model";
 import { restaurantSchema } from "./schema";
