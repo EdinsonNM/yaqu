@@ -1,0 +1,195 @@
+---
+description: clean architecture para la creación de modulos
+globs: 
+---
+# Cursor Code Rules
+
+## Project Structure
+
+The project follows a clean architecture with this folder structure:
+
+```
+src/
+  domain/
+    {module}/
+      models/
+      repositories/
+      usecases/
+      dtos/
+  infra/
+    {module}/
+      services/
+      hooks/
+      mocks/
+  presentation/
+    components/
+    pages/
+      authenticate/
+      unauthenticate/
+    hooks/
+    libs/
+    assets/
+```
+
+All code must be placed within these directories and follow the established conventions.
+
+## Architecture Rules
+
+### Domain Layer
+
+1. **Domain Models Must Extend Serializable**
+   - All models in `src/domain/{module}/models` must extend `Serializable` from `ts-serializable`
+   - Use `@jsonProperty()` decorators for class properties
+   - Use `@jsonName()` for snake_case to camelCase conversion
+   - Include constructor that accepts Partial<T> and calls super()
+   - Implementation example:
+   ```ts
+   import { jsonName, jsonProperty, Serializable } from "ts-serializable";
+   
+   export class Student extends Serializable {
+     @jsonProperty(String, null)
+     thumbnail?: string;
+     
+     @jsonProperty(String)
+     id?: string;
+     
+     @jsonProperty(String)
+     @jsonName("first_name")
+     firstName: string = "";
+     
+     @jsonProperty(String)
+     @jsonName("last_name")
+     lastName: string = "";
+     
+     @jsonProperty(String, Date, null)
+     @jsonName("birthdate")
+     birthdate?: string | Date;
+     
+     constructor(data?: Partial<Student>) {
+       super();
+       if (!data) return;
+       Object.assign(this, data);
+     }
+   }
+   ```
+   - Applicable to: `*.model.ts` files
+
+2. **Repository Interfaces as Abstract Classes**
+   - Repository interfaces in `src/domain/{module}/repositories` must be abstract classes
+   - Methods must return `Promise<T>` (not Observables)
+   - Standard CRUD methods: `getAll()`, `getById()`, `create()`, `update()`, `delete()`
+   - Applicable to: `*.repository.ts` files
+
+3. **DTOs Must Be Defined in Domain Layer**
+   - Define DTOs in `src/domain/{module}/dtos/`
+   - Include validation methods
+   - Use descriptive action prefixes (e.g., `CreateRestaurantDTO`)
+   - Applicable to: `*DTO.ts` files
+
+4. **Use Cases Must Follow DI Pattern**
+   - Use cases must be defined in `src/domain/{module}/usecases`
+   - Use `@injectable()` and `@registry()` decorators
+   - Register corresponding service repository implementation in the registry
+   - Accept dependencies via constructor injection with `@inject`
+   - Follow single responsibility pattern
+   - Return `Promise<T>` (not Observables)
+   - Follow this structure:
+   ```ts
+   @injectable()
+   @registry([
+     {
+       token: "[Entity]Repository",
+       useClass: [Entity]ServiceRepository,
+     },
+   ])
+   export class [Action][Entity]UseCase {
+     constructor(
+       @inject("[Entity]Repository")
+       private readonly repository: [Entity]Repository
+     ) {}
+
+     execute(params: [Action][Entity]DTO): Promise<[Entity]> {
+       return this.repository.[method](mdc:params);
+     }
+   }
+   ```
+   - Applicable to: `*-*.usecase.ts` files
+
+### Infrastructure Layer
+
+5. **Service Implementations Must Use Supabase**
+   - Implement domain repository interfaces in `src/infra/{module}/services`
+   - Use `@injectable()` and `@registry()` decorators from tsyringe
+   - Inject `SupabaseClient` with token "SupabaseClient"
+   - Define `tableName` property
+   - Use proper error handling with Supabase responses
+   - Return properly instantiated domain models
+   - Follow naming convention: `[name].service.repository.ts`
+   - Applicable to: `*.service.repository.ts` files
+
+6. **Infra Hooks Must Use TanStack Query Patterns**
+   - Hooks must be defined in `src/infra/{module}/hooks`
+   - Use TanStack Query hooks (`useQuery`, `useMutation`, `useQueryClient`)
+   - Resolve use cases with `container.resolve()`
+   - Use direct Promise handling (no Observable conversion needed)
+   - Handle query invalidation properly
+   - Follow naming convention: `use-[name]-[action].ts`
+   - Applicable to: `use-*.ts` files
+
+7. **One Hook Per Use Case**
+   - Each use case needs a dedicated hook with single responsibility in `src/infra/{module}/hooks`
+   - Query hooks should use `useQuery`
+   - Mutation hooks should use `useMutation`
+   - Hook name must follow format `use-[name]-[action].ts`
+   - Applicable to: `use-*.ts` files
+
+8. **Mock Repositories Must Follow Naming Convention**
+   - Must be defined in `src/infra/{module}/mocks`
+   - Implement the same domain repository interface as service counterparts
+   - Follow naming convention: `[name].mock.repository.ts`
+   - Use for testing and development environments
+   - Applicable to: `*.mock.repository.ts` files
+
+9. **Modular Infra Folder Structure**
+   - Each module under `src/infra/` needs its own folder structure:
+     - `src/infra/{module}/services/` for repository implementations
+     - `src/infra/{module}/hooks/` for TanStack Query hooks
+     - `src/infra/{module}/mocks/` for mock implementations
+   - File organization mirrors domain structure
+
+### Presentation Layer
+
+10. **Presentation Layer Organization**
+    - Follow structure within `src/presentation/`:
+      - `components/` for reusable UI components
+      - `pages/authenticate/` for protected routes
+      - `pages/unauthenticate/` for public routes
+      - `hooks/` for UI-specific hooks
+      - `libs/` for UI utilities and helpers
+      - `assets/` for static resources
+
+11. **Routes Must Use Lazy Loading**
+    - File must be located at `src/routes.tsx`
+    - Use React's `lazy()` for code splitting
+    - Route definitions must include authentication status
+    - Routes organized by feature/module
+    - Applicable to: `routes.tsx`
+
+## Coding Standards
+
+12. **Strict File Naming Convention**
+    - Domain models: `[name].model.ts` (e.g., `restaurant.model.ts`)
+    - Use cases: `[name]-[action].usecase.ts` (e.g., `restaurant-create.usecase.ts`)
+    - Repository interfaces: `[name].repository.ts` (e.g., `restaurant.repository.ts`) 
+    - Service implementations: `[name].service.repository.ts` (e.g., `restaurant.service.repository.ts`)
+    - Mock repositories: `[name].mock.repository.ts` (e.g., `restaurant.mock.repository.ts`)
+    - Hooks: `use-[name]-[action].ts` (e.g., `use-restaurant-create.ts`)
+    - Use `snake_case` for folder names
+    - Use `PascalCase` for classes, interfaces, types, and React components
+    - Use `camelCase` for variables, functions, and methods
+
+13. **Promises Must Be Consistently Handled**
+    - Use async/await syntax consistently
+    - Handle errors with try/catch blocks or throw errors explicitly
+    - Always return properly typed Promises
+    - For Supabase responses, check for errors before processing data

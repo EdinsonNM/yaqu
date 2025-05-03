@@ -42,6 +42,7 @@ export function NavUser() {
       },
     });
   };
+  if (!user) return null;
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -52,7 +53,7 @@ export function NavUser() {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg grayscale">
-                <AvatarImage src={user.avatar} alt={user.name} />
+                {/*<AvatarImage src={user.thumbnailUrl} alt={user.name} />*/}
                 <AvatarFallback className="rounded-lg">EN</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
