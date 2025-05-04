@@ -1,8 +1,6 @@
-import { Modal, Button, Alert } from "flowbite-react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import UserDataForm from "../shared/user-data-form";
-import { modalTheme } from "@presentation/components/themes/modal-theme";
 import { useUpdateUser } from "@infra/authentication/use-update-user";
 import { User } from "@domain/authentication/models/user";
 import { toast } from "react-toastify";
@@ -43,15 +41,15 @@ const UserFormEdit = ({
 
   const onSubmit = (data: any) => {
     if (!user.id) return;
-    
+
     updateUser(
-      { 
-        id: user.id, 
+      {
+        id: user.id,
         userData: {
           fullName: data.fullName,
-          roles: data.roles
-        }
-      }, 
+          roles: data.roles,
+        },
+      },
       {
         onSuccess: () => {
           toast.success("Usuario actualizado correctamente");
@@ -61,7 +59,7 @@ const UserFormEdit = ({
         onError: (err) => {
           toast.error("Error al actualizar el usuario");
           console.error("Error updating user:", err);
-        }
+        },
       }
     );
   };
@@ -81,30 +79,14 @@ const UserFormEdit = ({
   };
 
   return (
-    <Modal show={isOpen} onClose={onClose} size="xl" theme={modalTheme}>
-      <Modal.Header>Editar Usuario</Modal.Header>
-      {isError && <Alert color="failure">{error!.message}</Alert>}
-      <Modal.Body>
-        <UserDataForm
-          onSubmit={onSubmit}
-          form={form as any}
-          isFieldEditable={isFieldEditable}
-        />
-      </Modal.Body>
-      <Modal.Footer>
-        <Button color="gray" onClick={onClose}>
-          Cancelar
-        </Button>
-        <Button
-          type="submit"
-          form="user-form"
-          disabled={isPending}
-          isProcessing={isPending}
-        >
-          Guardar Cambios
-        </Button>
-      </Modal.Footer>
-    </Modal>
+    <UserDataForm
+      onSubmit={onSubmit}
+      form={form as any}
+      isFieldEditable={isFieldEditable}
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Editar Usuario"
+    />
   );
 };
 

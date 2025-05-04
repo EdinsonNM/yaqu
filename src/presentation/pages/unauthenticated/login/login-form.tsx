@@ -1,12 +1,10 @@
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { HiEye, HiEyeOff, HiUser } from "react-icons/hi";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   FaWhatsapp,
   FaInstagram,
   FaFacebook,
   FaLinkedin,
 } from "react-icons/fa";
-import HelperError from "@presentation/components/atoms/helper-error/helper-error";
 import { useEffect, useState } from "react";
 import { useLogin } from "@infra/authentication/use-login";
 import { useAuth } from "@presentation/utils/hooks/use-auth";
@@ -16,9 +14,8 @@ import useAuthStore from "@presentation/store/auth-store";
 import { UserSession } from "@domain/authentication/models/user-session";
 import { loginSchema } from "./login.schema";
 import { toast } from "react-toastify";
-import { Button } from "@/components/ui/button";
-import TextField from "@presentation/design/atoms/textfield/textfield";
-import { Input } from "@/components/ui/input";
+import { Button } from "@/presentation/components/ui/button";
+import { Input } from "@/presentation/components/ui/input";
 import { Loader2 } from "lucide-react";
 
 export default function LoginForm() {

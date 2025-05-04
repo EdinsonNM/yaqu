@@ -22,12 +22,12 @@ export enum Role {
 export const RoleLabel: Record<RoleName, string> = {
   [RoleName.SUPER_ADMIN]: "Super Admin",
   [RoleName.ADMIN]: "Admin",
-  [RoleName.KITCHEN_STAFF]: "Kitchen Staff",
-  [RoleName.WAITER]: "Waiter",
-  [RoleName.CASHIER]: "Cashier",
-  [RoleName.BAR_STAFF]: "Bar Staff",
-  [RoleName.RECEPTIONIST]: "Receptionist",
-  [RoleName.GUEST]: "Guest",
+  [RoleName.KITCHEN_STAFF]: "Personal de Cocina",
+  [RoleName.WAITER]: "Camarero",
+  [RoleName.CASHIER]: "Cajero",
+  [RoleName.BAR_STAFF]: "Personal de Barra",
+  [RoleName.RECEPTIONIST]: "Recepcionista",
+  [RoleName.GUEST]: "Invitado",
 };
 export const getRoleLabel = (role: RoleName) => {
   return RoleLabel[role];

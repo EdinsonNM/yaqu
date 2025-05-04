@@ -1,6 +1,5 @@
-import { Button } from "@/components/ui/button";
-import { DataTable } from "@/components/ui/data-table";
-import { Plus } from "lucide-react";
+import { Button } from "@presentation/components/ui/button";
+import { Edit, Plus, Trash } from "lucide-react";
 import { columns } from "./columns";
 import useModal from "@presentation/utils/hooks/use-modal";
 import { useState } from "react";
@@ -9,44 +8,51 @@ import UserFormNewModal from "../new/user-new";
 import DeleteUserConfirmationForm from "../delete/user-delete";
 import UserFormEdit from "../edit/user-edit";
 import { User } from "@domain/authentication/models/user";
-import { Role } from "@domain/authentication/enums/role.enum";
+import { RoleLabel, RoleName } from "@domain/authentication/enums/role.enum";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/presentation/components/ui/select";
+import { DataTable } from "@presentation/components/molecules/table/DataTable";
+import { TableActionsObject } from "@presentation/components/molecules/table/TableActions";
 
 // Roles ordenados según especificación
-const ORDERED_ROLES = [Role.admin, Role.teacher, Role.guardian];
 
 const UserList = () => {
   const modalNewUser = useModal();
   const modalEditUser = useModal();
   const modalDeleteUser = useModal();
   const [selectedUser, setSelectedUser] = useState<User | undefined>();
-  const [selectedRole, setSelectedRole] = useState<string>(Role.admin);
+  const [selectedRole, setSelectedRole] = useState<string>(
+    RoleName.SUPER_ADMIN
+  );
   const { data, isLoading, refetch } = useListUsers(selectedRole);
 
-  const handleEdit = (user: User) => {
-    setSelectedUser(user);
-    modalEditUser.openModal();
+  const actions: TableActionsObject<User> = {
+    edit: {
+      label: "Editar",
+      icon: <Edit />,
+      onClick: (user: User) => {
+        setSelectedUser(user);
+        modalEditUser.openModal();
+      },
+    },
+    delete: {
+      label: "Eliminar",
+      icon: <Trash />,
+      onClick: (user: User) => {
+        setSelectedUser(user);
+        modalDeleteUser.openModal();
+      },
+    },
   };
-
-  const handleDelete = (user: User) => {
-    setSelectedUser(user);
-    modalDeleteUser.openModal();
-  };
-
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-3xl font-bold tracking-tight">Usuarios</h2>
-        <Button onClick={modalNewUser.openModal}>
-          <Plus className="mr-2 h-4 w-4" />
-          Agregar
-        </Button>
+        <h2 className="text-2xl font-bold tracking-tight">Usuarios</h2>
       </div>
 
       <div className="flex items-center gap-4 mb-4">
@@ -57,9 +63,9 @@ const UserList = () => {
               <SelectValue placeholder="Selecciona un rol" />
             </SelectTrigger>
             <SelectContent>
-              {ORDERED_ROLES.map((role) => (
+              {Object.values(RoleName).map((role) => (
                 <SelectItem key={role} value={role}>
-                  {role}
+                  {RoleLabel[role]}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -69,27 +75,8 @@ const UserList = () => {
 
       <DataTable
         data={data || []}
-        columns={columns as any}
-        loading={isLoading}
-        searchableColumns={[
-          {
-            id: "full_name",
-            title: "Nombre",
-          },
-          {
-            id: "email",
-            title: "Email",
-          },
-          {
-            id: "roles",
-            title: "Rol",
-          },
-        ]}
-        pagination
-        meta={{
-          onEdit: handleEdit,
-          onDelete: handleDelete,
-        }}
+        columns={columns(actions)}
+        onAdd={() => modalNewUser.openModal()}
       />
       {/* User forms for create/edit/delete operations */}
       {modalNewUser.isOpen && (
@@ -99,21 +86,21 @@ const UserList = () => {
           fetchUsers={refetch}
         />
       )}
-      {selectedUser && (
-        <>
-          <UserFormEdit
-            isOpen={modalEditUser.isOpen}
-            onClose={modalEditUser.closeModal}
-            user={selectedUser}
-            fetchUsers={refetch}
-          />
-          <DeleteUserConfirmationForm
-            isOpen={modalDeleteUser.isOpen}
-            onClose={modalDeleteUser.closeModal}
-            user={selectedUser}
-            refetch={refetch}
-          />
-        </>
+      {modalEditUser.isOpen && (
+        <UserFormEdit
+          isOpen={modalEditUser.isOpen}
+          onClose={modalEditUser.closeModal}
+          user={selectedUser!}
+          fetchUsers={refetch}
+        />
+      )}
+      {modalDeleteUser.isOpen && (
+        <DeleteUserConfirmationForm
+          isOpen={modalDeleteUser.isOpen}
+          onClose={modalDeleteUser.closeModal}
+          user={selectedUser}
+          refetch={refetch}
+        />
       )}
     </div>
   );

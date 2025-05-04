@@ -42,6 +42,11 @@ const data = {
       icon: LayoutDashboardIcon,
     },
     {
+      title: "Usuarios",
+      url: "/dashboard/usuarios",
+      icon: UsersIcon,
+    },
+    {
       title: "Restaurantes",
       url: "/dashboard/restaurantes",
       icon: ListIcon,
@@ -55,11 +60,6 @@ const data = {
       title: "Projects",
       url: "#",
       icon: FolderIcon,
-    },
-    {
-      title: "Usuarios",
-      url: "#",
-      icon: UsersIcon,
     },
   ],
   navClouds: [

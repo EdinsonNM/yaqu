@@ -3,7 +3,13 @@ import { Modal } from "flowbite-react";
 import { useDeleteUser } from "@infra/authentication/use-delete-user";
 import { User } from "@domain/authentication/models/user";
 import { toast } from "react-toastify";
-import { modalTheme } from "@presentation/components/themes/modal-theme";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+} from "@presentation/components/ui/dialog";
+import { Button } from "@presentation/components/ui/button";
 
 interface DeleteUserConfirmationFormProps {
   isOpen: boolean;
@@ -12,9 +18,12 @@ interface DeleteUserConfirmationFormProps {
   refetch: () => void;
 }
 
-const DeleteUserConfirmationForm: React.FC<
-  DeleteUserConfirmationFormProps
-> = ({ isOpen, user, onClose, refetch }) => {
+const DeleteUserConfirmationForm: React.FC<DeleteUserConfirmationFormProps> = ({
+  isOpen,
+  user,
+  onClose,
+  refetch,
+}) => {
   const { mutate: deleteUser, isPending, error } = useDeleteUser();
 
   const handleDelete = () => {
@@ -28,7 +37,7 @@ const DeleteUserConfirmationForm: React.FC<
         onError: (err) => {
           toast.error("Error al eliminar el usuario");
           console.error("Error deleting user:", err);
-        }
+        },
       });
     }
   };
@@ -38,39 +47,28 @@ const DeleteUserConfirmationForm: React.FC<
   }
 
   return (
-    <Modal show={isOpen} onClose={onClose} theme={modalTheme}>
-      <Modal.Header>Confirmar Eliminación</Modal.Header>
-      <Modal.Body>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogHeader>Confirmar Eliminación</DialogHeader>
+      <DialogContent>
         <p>
-          ¿Está seguro que deseas eliminar al usuario{" "}
-          <b>
-            {user.fullName}
-          </b>
-          ? Esta acción no se puede deshacer.
+          ¿Está seguro que deseas eliminar al usuario <b>{user.fullName}</b>?
+          Esta acción no se puede deshacer.
         </p>
         {error && (
           <p className="text-red-600">
             Error al eliminar el usuario. Por favor, inténtelo de nuevo.
           </p>
         )}
-      </Modal.Body>
-      <Modal.Footer>
-        <button
-          onClick={onClose}
-          className="px-4 py-2 text-gray-600 bg-gray-200 rounded hover:bg-gray-300"
-          disabled={isPending}
-        >
+      </DialogContent>
+      <DialogFooter>
+        <Button variant="outline" onClick={onClose} disabled={isPending}>
           Cancelar
-        </button>
-        <button
-          onClick={handleDelete}
-          className="px-4 py-2 text-white bg-red-600 rounded hover:bg-red-700"
-          disabled={isPending}
-        >
+        </Button>
+        <Button onClick={handleDelete} disabled={isPending}>
           {isPending ? "Eliminando..." : "Eliminar"}
-        </button>
-      </Modal.Footer>
-    </Modal>
+        </Button>
+      </DialogFooter>
+    </Dialog>
   );
 };
 

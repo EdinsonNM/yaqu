@@ -43,7 +43,7 @@ export function RestaurantList() {
 
   return (
     <div className="container mx-auto py-6">
-      <h1 className="text-2xl font-bold mb-6">Gestión de Restaurantes</h1>
+      <h1 className="text-2xl font-bold mb-6">Restaurantes</h1>
       <p className="mb-4 text-sm text-muted-foreground">
         En esta sección, puedes gestionar la lista de restaurantes. Puedes
         agregar nuevos restaurantes, editar la información existente o eliminar
