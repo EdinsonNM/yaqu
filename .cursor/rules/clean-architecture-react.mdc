@@ -21,14 +21,6 @@ src/
       services/
       hooks/
       mocks/
-  presentation/
-    components/
-    pages/
-      authenticate/
-      unauthenticate/
-    hooks/
-    libs/
-    assets/
 ```
 
 All code must be placed within these directories and follow the established conventions.
@@ -46,26 +38,25 @@ All code must be placed within these directories and follow the established conv
    ```ts
    import { jsonName, jsonProperty, Serializable } from "ts-serializable";
    
-   export class Student extends Serializable {
+   export class Restaurant extends Serializable {
      @jsonProperty(String, null)
-     thumbnail?: string;
-     
-     @jsonProperty(String)
      id?: string;
-     
+   
      @jsonProperty(String)
-     @jsonName("first_name")
-     firstName: string = "";
-     
-     @jsonProperty(String)
-     @jsonName("last_name")
-     lastName: string = "";
-     
-     @jsonProperty(String, Date, null)
-     @jsonName("birthdate")
-     birthdate?: string | Date;
-     
-     constructor(data?: Partial<Student>) {
+     name: string = "";
+   
+     @jsonProperty(String, null)
+     description?: string;
+   
+     @jsonProperty(String, null)
+     @jsonName("logo_url")
+     logoUrl?: string;
+   
+     @jsonProperty(Date, null)
+     @jsonName("created_at")
+     createdAt?: Date;
+   
+     constructor(data?: Partial<Restaurant>) {
        super();
        if (!data) return;
        Object.assign(this, data);
@@ -78,6 +69,18 @@ All code must be placed within these directories and follow the established conv
    - Repository interfaces in `src/domain/{module}/repositories` must be abstract classes
    - Methods must return `Promise<T>` (not Observables)
    - Standard CRUD methods: `getAll()`, `getById()`, `create()`, `update()`, `delete()`
+   - Implementation example:
+   ```ts
+   import { Restaurant } from "../models/restaurant.model";
+
+   export abstract class RestaurantRepository {
+     abstract getAll(): Promise<Restaurant[]>;
+     abstract getById(id: string): Promise<Restaurant | null>;
+     abstract create(data: Partial<Restaurant>): Promise<Restaurant>;
+     abstract update(id: string, data: Partial<Restaurant>): Promise<Restaurant>;
+     abstract delete(id: string): Promise<void>;
+   }
+   ```
    - Applicable to: `*.repository.ts` files
 
 3. **DTOs Must Be Defined in Domain Layer**
@@ -95,21 +98,26 @@ All code must be placed within these directories and follow the established conv
    - Return `Promise<T>` (not Observables)
    - Follow this structure:
    ```ts
+   import { injectable, inject, registry } from "tsyringe";
+   import { RestaurantRepository } from "../repositories/restaurant.repository";
+   import { RestaurantServiceRepository } from "../../../infra/restaurant/services/restaurant.service.repository";
+   import { Restaurant } from "../models/restaurant.model";
+
    @injectable()
    @registry([
      {
-       token: "[Entity]Repository",
-       useClass: [Entity]ServiceRepository,
+       token: "RestaurantRepository",
+       useClass: RestaurantServiceRepository,
      },
    ])
-   export class [Action][Entity]UseCase {
+   export class GetRestaurantByIdUseCase {
      constructor(
-       @inject("[Entity]Repository")
-       private readonly repository: [Entity]Repository
+       @inject("RestaurantRepository")
+       private readonly repository: RestaurantRepository
      ) {}
 
-     execute(params: [Action][Entity]DTO): Promise<[Entity]> {
-       return this.repository.[method](mdc:params);
+     execute(id: string): Promise<Restaurant | null> {
+       return this.repository.getById(id);
      }
    }
    ```
@@ -119,12 +127,61 @@ All code must be placed within these directories and follow the established conv
 
 5. **Service Implementations Must Use Supabase**
    - Implement domain repository interfaces in `src/infra/{module}/services`
-   - Use `@injectable()` and `@registry()` decorators from tsyringe
+   - Use `@injectable()` decorator from tsyringe
    - Inject `SupabaseClient` with token "SupabaseClient"
-   - Define `tableName` property
+   - Define `tableName` property as readonly
    - Use proper error handling with Supabase responses
    - Return properly instantiated domain models
-   - Follow naming convention: `[name].service.repository.ts`
+   - Follow naming convention: `{entity}.service.repository.ts`
+   - Implementation example:
+   ```ts
+   import { injectable, inject } from "tsyringe";
+   import { SupabaseClient } from "@supabase/supabase-js";
+   import { RestaurantRepository } from "../../../domain/restaurant/repositories/restaurant.repository";
+   import { Restaurant } from "../../../domain/restaurant/models/restaurant.model";
+
+   @injectable()
+   export class RestaurantServiceRepository implements RestaurantRepository {
+     private readonly tableName = "restaurants";
+
+     constructor(
+       @inject("SupabaseClient")
+       private readonly supabase: SupabaseClient
+     ) {}
+
+     async getAll(): Promise<Restaurant[]> {
+       const { data, error } = await this.supabase
+         .from(this.tableName)
+         .select("*")
+         .order("created_at", { ascending: false });
+
+       if (error) {
+         throw new Error(`Error al obtener restaurantes: ${error.message}`);
+       }
+
+       return data.map((item) => new Restaurant(item));
+     }
+
+     async getById(id: string): Promise<Restaurant | null> {
+       const { data, error } = await this.supabase
+         .from(this.tableName)
+         .select("*")
+         .eq("id", id)
+         .single();
+
+       if (error) {
+         if (error.code === "PGRST116") {
+           return null; // No se encontró el restaurante
+         }
+         throw new Error(`Error al obtener restaurante: ${error.message}`);
+       }
+
+       return new Restaurant(data);
+     }
+
+     // Other methods...
+   }
+   ```
    - Applicable to: `*.service.repository.ts` files
 
 6. **Infra Hooks Must Use TanStack Query Patterns**
@@ -133,14 +190,67 @@ All code must be placed within these directories and follow the established conv
    - Resolve use cases with `container.resolve()`
    - Use direct Promise handling (no Observable conversion needed)
    - Handle query invalidation properly
-   - Follow naming convention: `use-[name]-[action].ts`
+   - Follow naming convention: `use-{entity}-{action}.ts`
+   - Query hook implementation example:
+   ```ts
+   import { useQuery } from "@tanstack/react-query";
+   import { container } from "tsyringe";
+   import { GetRestaurantByIdUseCase } from "../../../domain/restaurant/usecases/get-restaurant-by-id.usecase";
+
+   export const useRestaurantGetById = (id: string) => {
+     const getRestaurantByIdUseCase = container.resolve(GetRestaurantByIdUseCase);
+
+     return useQuery({
+       queryKey: ["restaurants", id],
+       queryFn: () => getRestaurantByIdUseCase.execute(id),
+       enabled: !!id,
+     });
+   };
+   ```
+   - Mutation hook implementation example:
+   ```ts
+   import { useMutation, useQueryClient } from "@tanstack/react-query";
+   import { container } from "tsyringe";
+   import { CreateRestaurantUseCase } from "../../../domain/restaurant/usecases/create-restaurant.usecase";
+   import { Restaurant } from "@domain/restaurant/models/restaurant.model";
+
+   export const useRestaurantCreate = () => {
+     const createRestaurantUseCase = container.resolve(CreateRestaurantUseCase);
+     const queryClient = useQueryClient();
+
+     return useMutation({
+       mutationFn: (data: Partial<Restaurant>) =>
+         createRestaurantUseCase.execute(data),
+       onSuccess: () => {
+         queryClient.invalidateQueries({ queryKey: ["restaurants"] });
+       },
+     });
+   };
+   ```
    - Applicable to: `use-*.ts` files
 
 7. **One Hook Per Use Case**
    - Each use case needs a dedicated hook with single responsibility in `src/infra/{module}/hooks`
    - Query hooks should use `useQuery`
-   - Mutation hooks should use `useMutation`
-   - Hook name must follow format `use-[name]-[action].ts`
+   - Mutation hooks should use `useMutation` with query invalidation in `onSuccess`
+   - Different naming patterns for singular and plural entities:
+     - Single entity actions: `use-{entity}-{action}.ts`
+     - Collection actions: `use-{entity}s-{action}.ts`
+   - Example of collection hook:
+   ```ts
+   import { useQuery } from "@tanstack/react-query";
+   import { container } from "tsyringe";
+   import { GetAllRestaurantsUseCase } from "../../../domain/restaurant/usecases/get-all-restaurants.usecase";
+
+   export const useRestaurantsGetAll = () => {
+     const getAllRestaurantsUseCase = container.resolve(GetAllRestaurantsUseCase);
+
+     return useQuery({
+       queryKey: ["restaurants"],
+       queryFn: () => getAllRestaurantsUseCase.execute(),
+     });
+   };
+   ```
    - Applicable to: `use-*.ts` files
 
 8. **Mock Repositories Must Follow Naming Convention**
@@ -159,31 +269,19 @@ All code must be placed within these directories and follow the established conv
 
 ### Presentation Layer
 
-10. **Presentation Layer Organization**
-    - Follow structure within `src/presentation/`:
-      - `components/` for reusable UI components
-      - `pages/authenticate/` for protected routes
-      - `pages/unauthenticate/` for public routes
-      - `hooks/` for UI-specific hooks
-      - `libs/` for UI utilities and helpers
-      - `assets/` for static resources
+# This rule has been removed as UI guidelines will be defined separately.
 
-11. **Routes Must Use Lazy Loading**
-    - File must be located at `src/routes.tsx`
-    - Use React's `lazy()` for code splitting
-    - Route definitions must include authentication status
-    - Routes organized by feature/module
-    - Applicable to: `routes.tsx`
+# This rule has been removed as UI guidelines will be defined separately.
 
 ## Coding Standards
 
 12. **Strict File Naming Convention**
-    - Domain models: `[name].model.ts` (e.g., `restaurant.model.ts`)
-    - Use cases: `[name]-[action].usecase.ts` (e.g., `restaurant-create.usecase.ts`)
-    - Repository interfaces: `[name].repository.ts` (e.g., `restaurant.repository.ts`) 
-    - Service implementations: `[name].service.repository.ts` (e.g., `restaurant.service.repository.ts`)
-    - Mock repositories: `[name].mock.repository.ts` (e.g., `restaurant.mock.repository.ts`)
-    - Hooks: `use-[name]-[action].ts` (e.g., `use-restaurant-create.ts`)
+    - Domain models: `{entity}.model.ts` (e.g., `restaurant.model.ts`)
+    - Use cases: `{action}-{entity}.usecase.ts` (e.g., `get-restaurant-by-id.usecase.ts`)
+    - Repository interfaces: `{entity}.repository.ts` (e.g., `restaurant.repository.ts`) 
+    - Service implementations: `{entity}.service.repository.ts` (e.g., `restaurant.service.repository.ts`)
+    - Mock repositories: `{entity}.mock.repository.ts` (e.g., `restaurant.mock.repository.ts`)
+    - Hooks: `use-{entity}-{action}.ts` (e.g., `use-restaurant-get-by-id.ts`) or `use-{entity}s-{action}.ts` (e.g., `use-restaurants-get-all.ts`)
     - Use `snake_case` for folder names
     - Use `PascalCase` for classes, interfaces, types, and React components
     - Use `camelCase` for variables, functions, and methods

@@ -4,10 +4,11 @@ import { columns } from "./columns";
 import { DataTable } from "../../../../components/molecules/table/DataTable";
 import { RestaurantNew } from "../new/restaurant-new";
 import useModal from "@presentation/utils/hooks/use-modal";
-import { Edit, Trash } from "lucide-react";
+import { Edit, Trash, Users } from "lucide-react";
 import { TableActionsObject } from "../../../../components/molecules/table/TableActions";
 import { Restaurant } from "@domain/restaurant/models/restaurant.model";
 import { RestaurantEdit } from "../edit/restaurant-edit";
+import { RestaurantUsers } from "../users/restaurant-users";
 
 export function RestaurantList() {
   const { data: restaurants = [], refetch } = useRestaurantsGetAll();
@@ -17,6 +18,7 @@ export function RestaurantList() {
   const modalNew = useModal();
   const modalEdit = useModal();
   const modalDelete = useModal();
+  const modalUsers = useModal();
   const handleAdd = () => {
     setCurrentRestaurant(null);
     modalNew.openModal();
@@ -37,6 +39,14 @@ export function RestaurantList() {
       onClick: (restaurant: Restaurant) => {
         setCurrentRestaurant(restaurant);
         modalDelete.openModal();
+      },
+    },
+    users: {
+      label: "Usuarios",
+      icon: <Users />,
+      onClick: (restaurant: Restaurant) => {
+        setCurrentRestaurant(restaurant);
+        modalUsers.openModal();
       },
     },
   };
@@ -63,6 +73,13 @@ export function RestaurantList() {
           onClose={modalEdit.closeModal}
           refetch={refetch}
           restaurant={currentRestaurant!}
+        />
+      )}
+      {modalUsers.isOpen && (
+        <RestaurantUsers
+          onClose={modalUsers.closeModal}
+          restaurant={currentRestaurant!}
+          isOpen={modalUsers.isOpen}
         />
       )}
     </div>

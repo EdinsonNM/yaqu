@@ -30,13 +30,13 @@ export class UserServiceRepository implements UserRepository {
 
   async getByEmail(email: string): Promise<User | null> {
     const { data, error } = await this.supabase
-      .from("users")
+      .from("profiles")
       .select("*")
       .eq("email", email)
       .single();
 
     if (error) throw error;
-    return data;
+    return new User().fromJSON(data);
   }
 
   async create(user: Omit<User, "id">): Promise<User> {

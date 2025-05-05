@@ -5,45 +5,44 @@ import { PlusCircleIcon, type LucideIcon } from "lucide-react";
 import {
   SidebarGroup,
   SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/presentation/components/ui/sidebar";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 
 export function NavMain({
   items,
+  title,
 }: {
   items: {
     title: string;
     url: string;
     icon?: LucideIcon;
   }[];
+  title: string;
 }) {
-  const navigate = useNavigate();
+  const location = useLocation();
   return (
     <SidebarGroup>
+      <SidebarGroupLabel>{title}</SidebarGroupLabel>
       <SidebarGroupContent className="flex flex-col gap-2">
         <SidebarMenu>
-          <SidebarMenuItem className="flex items-center gap-2">
-            <SidebarMenuButton
-              tooltip="Quick Create"
-              className="min-w-8 bg-orange-500 text-primary-foreground duration-200 ease-linear hover:bg-orange-500/90 hover:text-primary-foreground active:bg-orange-500/90 active:text-primary-foreground"
-            >
-              <PlusCircleIcon />
-              <span>Registrar Restaurante</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-        <SidebarMenu>
           {items.map((item) => (
-            <SidebarMenuItem
-              key={item.title}
-              onClick={() => navigate(item.url)}
-            >
-              <SidebarMenuButton tooltip={item.title}>
-                {item.icon && <item.icon />}
-                <span>{item.title}</span>
+            <SidebarMenuItem key={item.title}>
+              <SidebarMenuButton tooltip={item.title} asChild>
+                <NavLink
+                  to={item.url}
+                  className={
+                    location.pathname === item.url
+                      ? "min-w-8 bg-orange-500 text-primary-foreground hover:bg-orange-500/90 active:bg-orange-500/90"
+                      : ""
+                  }
+                >
+                  {item.icon && <item.icon />}
+                  <span>{item.title}</span>
+                </NavLink>
               </SidebarMenuButton>
             </SidebarMenuItem>
           ))}

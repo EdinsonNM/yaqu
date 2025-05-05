@@ -2,14 +2,12 @@
 
 import * as React from "react";
 import {
-  BarChartIcon,
   CameraIcon,
   ClipboardListIcon,
   DatabaseIcon,
   FileCodeIcon,
   FileIcon,
   FileTextIcon,
-  FolderIcon,
   HelpCircleIcon,
   LayoutDashboardIcon,
   ListIcon,
@@ -27,7 +25,9 @@ import {
 import { NavUser } from "./nav-user";
 import { NavMain } from "./nav-main";
 import { NavSecondary } from "./nav-secondary";
-import { NavDocuments } from "./nav-documents";
+import { ProtectedRoute } from "@presentation/components/molecules/protected-route/protected-route";
+import { RoleName } from "@domain/authentication/enums/role.enum";
+import { NavAdmin } from "./nav-admin";
 
 const data = {
   user: {
@@ -50,16 +50,6 @@ const data = {
       title: "Restaurantes",
       url: "/dashboard/restaurantes",
       icon: ListIcon,
-    },
-    {
-      title: "Reportes",
-      url: "#",
-      icon: BarChartIcon,
-    },
-    {
-      title: "Projects",
-      url: "#",
-      icon: FolderIcon,
     },
   ],
   navClouds: [
@@ -129,18 +119,23 @@ const data = {
   ],
   documents: [
     {
-      name: "Mi Restaurante",
-      url: "#",
+      title: "Dashboard",
+      url: "/dashboard/dashboard-admin",
+      icon: LayoutDashboardIcon,
+    },
+    {
+      title: "Mi Restaurante",
+      url: "/dashboard/mi-restaurante",
       icon: DatabaseIcon,
     },
     {
-      name: "Pedidos",
-      url: "#",
+      title: "Pedidos",
+      url: "/dashboard/restaurantes/1/pedidos",
       icon: ClipboardListIcon,
     },
     {
-      name: "Reportes",
-      url: "#",
+      title: "Reportes",
+      url: "/dashboard/restaurantes/1/reportes",
       icon: FileIcon,
     },
   ],
@@ -157,12 +152,19 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
-        <img src={"/logo.png"} alt="Logo" className="w-30 mx-auto" />
+        <img src={"/carta_viva.png"} alt="Logo" className="w-30 mx-auto" />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavDocuments title="Restaurante" items={data.documents} />
-        <NavDocuments title="Cocina" items={data.kitchen} />
+        <ProtectedRoute allowedRoles={[RoleName.SUPER_ADMIN]}>
+          <NavMain title="Administración General" items={data.navMain} />
+        </ProtectedRoute>
+        <ProtectedRoute allowedRoles={[RoleName.SUPER_ADMIN, RoleName.ADMIN]}>
+          <NavAdmin
+            title="Administrador de Restaurantes"
+            items={data.documents}
+          />
+        </ProtectedRoute>
+
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
