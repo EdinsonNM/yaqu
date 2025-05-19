@@ -1,46 +1,52 @@
-import { useState } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/presentation/components/ui/card";
+import { useEffect, useState } from "react";
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
 } from "@/presentation/components/ui/tabs";
-import { Button } from "@/presentation/components/ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/presentation/components/ui/table";
-import { PlusCircle, Edit, Trash2 } from "lucide-react";
 import useRestaurantStore from "@presentation/store/restaurant-store";
-import MyRestaurantInfo from "./my-restaurant-info";
-import { MyRestaurantUsers } from "./my-restaurant-users";
-import { MyRestaurantMenu } from "./my-restaurant-menu";
+import MyRestaurantInfo from "./info/my-restaurant-info";
+import { MyRestaurantUsers } from "./users/my-restaurant-users";
+import { MyRestaurantMenu } from "./menu/my-restaurant-menu";
+import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
+import { MyRestaurantMenuItems } from "./menu/my-restaurant-menu-items";
+import MyRestaurantTablets from "./tablets/my-restaurant-tablets";
 
 const MyRestaurant = () => {
   const [activeTab, setActiveTab] = useState("info");
   const { currentRestaurant } = useRestaurantStore();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    switch (location.pathname) {
+      case "/dashboard/mi-restaurante":
+        setActiveTab("info");
+        break;
+      case "/dashboard/mi-restaurante/info":
+        setActiveTab("info");
+        break;
+      case "/dashboard/mi-restaurante/users":
+        setActiveTab("users");
+        break;
+      case "/dashboard/mi-restaurante/menu":
+        setActiveTab("menu");
+        break;
+      case location.pathname.match(
+        /^\/dashboard\/mi-restaurante\/menu\/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/
+      )?.input:
+        setActiveTab("menu");
+        break;
+      case "/dashboard/mi-restaurante/tables":
+        setActiveTab("tables");
+        break;
+    }
+  }, [location.pathname]);
 
   if (!currentRestaurant) {
     return <div>No hay restaurante seleccionado</div>;
   }
-
-  const tables = [
-    { id: 1, name: "Mesa 1", capacity: 4, location: "Interior" },
-    { id: 2, name: "Mesa 2", capacity: 2, location: "Interior" },
-    { id: 3, name: "Mesa 3", capacity: 6, location: "Terraza" },
-  ];
-
   return (
     <div className="container mx-auto p-6">
       <h1 className="text-3xl font-bold mb-6">
@@ -50,76 +56,60 @@ const MyRestaurant = () => {
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid grid-cols-4 mb-6">
-          <TabsTrigger value="info">Información</TabsTrigger>
-          <TabsTrigger value="users">Usuarios</TabsTrigger>
-          <TabsTrigger value="menu">Carta</TabsTrigger>
-          <TabsTrigger value="tables">Mesas</TabsTrigger>
+          <TabsTrigger
+            value="info"
+            onClick={() => navigate("/dashboard/mi-restaurante/info")}
+          >
+            Información
+          </TabsTrigger>
+          <TabsTrigger
+            value="users"
+            onClick={() => navigate("/dashboard/mi-restaurante/users")}
+          >
+            Usuarios
+          </TabsTrigger>
+          <TabsTrigger
+            value="menu"
+            onClick={() => navigate("/dashboard/mi-restaurante/menu")}
+          >
+            Carta
+          </TabsTrigger>
+          <TabsTrigger
+            value="tables"
+            onClick={() => navigate("/dashboard/mi-restaurante/tables")}
+          >
+            Mesas
+          </TabsTrigger>
         </TabsList>
 
         {/* Sección de Información del Restaurante */}
         <TabsContent value="info">
-          <MyRestaurantInfo />
+          <Routes>
+            <Route path="/" element={<MyRestaurantInfo />} index />
+            <Route path="/info" element={<MyRestaurantInfo />} />
+          </Routes>
         </TabsContent>
 
         {/* Sección de Usuarios */}
         <TabsContent value="users">
-          <MyRestaurantUsers />
+          <Routes>
+            <Route path="/users" element={<MyRestaurantUsers />} index />
+          </Routes>
         </TabsContent>
 
         {/* Sección de Carta/Menú */}
         <TabsContent value="menu">
-          <MyRestaurantMenu />
+          <Routes>
+            <Route path="/menu" element={<MyRestaurantMenu />} />
+            <Route path="/menu/:menuId" element={<MyRestaurantMenuItems />} />
+          </Routes>
         </TabsContent>
 
         {/* Sección de Mesas */}
         <TabsContent value="tables">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <div>
-                <CardTitle>Mesas del Restaurante</CardTitle>
-                <CardDescription>
-                  Gestiona las mesas disponibles en tu local
-                </CardDescription>
-              </div>
-              <Button className="flex items-center gap-1">
-                <PlusCircle className="h-4 w-4" />
-                <span>Añadir Mesa</span>
-              </Button>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Nombre</TableHead>
-                    <TableHead>Capacidad</TableHead>
-                    <TableHead>Ubicación</TableHead>
-                    <TableHead className="text-right">Acciones</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {tables.map((table) => (
-                    <TableRow key={table.id}>
-                      <TableCell className="font-medium">
-                        {table.name}
-                      </TableCell>
-                      <TableCell>{table.capacity} personas</TableCell>
-                      <TableCell>{table.location}</TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end gap-2">
-                          <Button variant="ghost" size="icon">
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="icon">
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
+          <Routes>
+            <Route path="/tables" element={<MyRestaurantTablets />} index />
+          </Routes>
         </TabsContent>
       </Tabs>
     </div>

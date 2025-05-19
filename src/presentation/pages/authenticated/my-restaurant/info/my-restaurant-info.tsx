@@ -9,7 +9,7 @@ import {
 import { Input } from "@presentation/components/ui/input";
 import { Label } from "@presentation/components/ui/label";
 import useRestaurantStore from "@presentation/store/restaurant-store";
-import { restaurantSchema } from "../restaurant/components/schema";
+import { restaurantSchema } from "../../restaurant/components/schema";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useEffect } from "react";
 import { Textarea } from "@presentation/components/ui/textarea";

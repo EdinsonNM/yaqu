@@ -13,7 +13,7 @@ const DashboardRoutes = () => (
       <Route path="/" element={<DashboardDefault />} />
       <Route path="/restaurantes" element={<RestaurantList />} />
       <Route path="/usuarios" element={<UserList />} />
-      <Route path="/mi-restaurante" element={<MyRestaurant />} />
+      <Route path="/mi-restaurante/*" element={<MyRestaurant />} />
       <Route path="/dashboard-admin" element={<DashboardAdmin />} />
     </Routes>
   </Suspense>

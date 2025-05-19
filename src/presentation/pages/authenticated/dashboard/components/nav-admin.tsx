@@ -49,6 +49,7 @@ export function NavAdmin({
   );
 
   const location = useLocation();
+  console.log(location.pathname);
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       <SidebarGroupLabel>{title}</SidebarGroupLabel>
@@ -57,7 +58,7 @@ export function NavAdmin({
         <SidebarMenuItem>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <SidebarMenuButton className="justify-between">
+              <SidebarMenuButton className="justify-between bg-black text-white hover:bg-black/90 active:bg-black/90">
                 <div className="flex items-center gap-2">
                   <BuildingIcon />
                   <span>{currentRestaurant?.name ?? "Seleccione..."}</span>
@@ -96,7 +97,7 @@ export function NavAdmin({
                 <NavLink
                   to={item.url}
                   className={
-                    location.pathname === item.url
+                    location.pathname.includes(item.url)
                       ? "min-w-8 bg-orange-500 text-primary-foreground hover:bg-orange-500/90 active:bg-orange-500/90"
                       : ""
                   }
