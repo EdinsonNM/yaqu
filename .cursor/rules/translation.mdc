@@ -1,0 +1,38 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+🧩 Rule name: manage-i18n-translations
+📌 Description: Crea o actualiza archivos de traducción por módulo para un proyecto en React con Vite y TypeScript (`.tsx`), usando `react-i18next` y estructura modular localizada en `public/locales/{lang}/{modulename}.json`.
+
+🎯 Trigger: Cuando indique frases como:
+- “Agrega las traducciones para el módulo login”
+- “Incluye las claves de i18n para el módulo dashboard”
+- “Genera archivo i18n para settings”
+
+📦 Contexto del proyecto:
+- Framework: React con Vite
+- Lenguaje: TypeScript (`.tsx`)
+- Internacionalización: `react-i18next`
+- Estructura de archivos de traducción:
+  - `public/locales/{lang}/{modulename}.json`
+  - Por ejemplo: `public/locales/es/login.json`, `public/locales/en/dashboard.json`
+- El idioma por defecto debe ser el del usuario del sistema. Si no puede ser detectado, usar inglés (`en`) como fallback.
+
+⚙️ Comportamiento esperado:
+1. Detecta el módulo indicado y analiza sus archivos `.tsx` dentro del proyecto.
+ales/{lang}/{modulename}.json`.
+3. Extrae todos los textos visibles dentro del JSX:
+   - Títulos (`<h1>`, `<h2>`, etc.)
+   - Etiquetas (`<label>`, `aria-label`)
+   - Placeholders, botones, mensajes de validación, estados vacíos, tooltips, etc.
+4. Genera claves de traducción descriptivas y planas. Ejemplo:
+
+```json
+{
+  "login.title": "Sign In",
+  "login.username": "Username",
+  "login.password": "Password",
+  "login.submit": "Log In"
+}

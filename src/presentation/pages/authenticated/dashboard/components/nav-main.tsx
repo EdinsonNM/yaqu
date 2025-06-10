@@ -26,7 +26,7 @@ export function NavMain({
   const location = useLocation();
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>{title}</SidebarGroupLabel>
+      {title && <SidebarGroupLabel>{title}</SidebarGroupLabel>}
       <SidebarGroupContent className="flex flex-col gap-2">
         <SidebarMenu>
           {items.map((item) => (
@@ -36,7 +36,7 @@ export function NavMain({
                   to={item.url}
                   className={
                     location.pathname === item.url
-                      ? "min-w-8 bg-orange-500 text-primary-foreground hover:bg-orange-500/90 active:bg-orange-500/90"
+                      ? "min-w-8 bg-green-500 text-primary-foreground hover:bg-green-500/90 active:bg-green-500/90"
                       : ""
                   }
                 >

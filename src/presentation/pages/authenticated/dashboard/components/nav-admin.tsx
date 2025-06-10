@@ -8,6 +8,7 @@ import {
   CheckIcon,
   PlusIcon,
   Building2Icon,
+  User,
 } from "lucide-react";
 
 import {
@@ -26,15 +27,13 @@ import {
 } from "@/presentation/components/ui/sidebar";
 import { NavLink, useLocation } from "react-router-dom";
 import useRestaurantStore from "@presentation/store/restaurant-store";
-import { useUserRestaurantsByUserId } from "@infra/user_restaurant/hooks/use-user-restaurants-by-user-id";
 import useAuthStore from "@presentation/store/auth-store";
-import { UserRestaurant } from "@domain/user_restaurant/models/user-restaurant.model";
 
 export function NavAdmin({
   title,
   items,
 }: {
-  title: string;
+  title?: string;
   items: {
     title: string;
     url: string;
@@ -44,15 +43,12 @@ export function NavAdmin({
   const { isMobile } = useSidebar();
   const { currentRestaurant, setCurrentRestaurant } = useRestaurantStore();
   const { userSession } = useAuthStore();
-  const { data: userRestaurants } = useUserRestaurantsByUserId(
-    userSession?.user.id ?? ""
-  );
 
   const location = useLocation();
   console.log(location.pathname);
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-      <SidebarGroupLabel>{title}</SidebarGroupLabel>
+      {title && <SidebarGroupLabel>{title}</SidebarGroupLabel>}
       <SidebarMenu>
         {/* Selector de restaurante */}
         <SidebarMenuItem>
@@ -71,7 +67,7 @@ export function NavAdmin({
               side={isMobile ? "bottom" : "right"}
               align={isMobile ? "end" : "start"}
             >
-              {userRestaurants?.map((userRestaurant: UserRestaurant) => (
+              {[]?.map((userRestaurant: any) => (
                 <DropdownMenuItem
                   key={userRestaurant.restaurant!.id}
                   onClick={() =>

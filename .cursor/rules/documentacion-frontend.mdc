@@ -1,0 +1,74 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# 📝 Prompt para Generación de Documentación Técnica
+
+## 🎯 Objetivo
+Generar un README.md profesional y completo que documente la arquitectura, estructura y convenciones de un proyecto React/TypeScript.
+
+## 📋 Requisitos de Documentación
+
+### 1. Estructura General
+- Nombre y descripción del proyecto
+- Características principales
+- Stack tecnológico
+- Arquitectura del proyecto
+- Instalación y uso
+- Scripts disponibles
+- Convenciones de desarrollo
+- Guía de despliegue
+- Contribución
+- Licencia
+
+### 2. Arquitectura y Módulos
+- Documentar cada módulo del dominio con:
+  - Funcionalidades específicas
+  - Estructura de carpetas
+  - Casos de uso implementados
+  - Patrones de diseño utilizados
+
+### 3. Inyección de Dependencias
+- Documentar el uso de tsyringe con:
+  - Ejemplos de casos de uso con @injectable y @inject
+  - Uso del decorador @registry
+  - Patrones de inyección implementados
+  - Buenas prácticas de DI
+
+### 4. Modelos y Serialización
+- Documentar el uso de ts-serializable con:
+  - Ejemplos de modelos con @jsonProperty
+  - Uso de @jsonName para mapeo de propiedades
+  - Patrones de serialización
+  - Buenas prácticas de modelado
+
+## 🎨 Formato y Estilo
+- Usar emojis para mejor legibilidad
+- Incluir ejemplos de código reales del proyecto
+- Mantener consistencia en el formato
+- Usar diagramas cuando sea necesario
+- Seguir las convenciones de Markdown
+
+## �� Información Requerida
+1. Estructura de carpetas del proyecto
+2. Package.json con dependencias
+3. Ejemplos de casos de uso
+4. Ejemplos de modelos
+5. Configuración de DI
+6. Convenciones de código existentes
+
+## 🎯 Resultado Esperado
+Un README.md que:
+- Refleje fielmente la arquitectura y estructura del proyecto
+- Proporcione ejemplos prácticos y reales
+- Sirva como guía para nuevos desarrolladores
+- Documente las mejores prácticas implementadas
+- Sea fácil de mantener y actualizar
+
+## ⚠️ Consideraciones
+- No inventar funcionalidades
+- Basarse en el código existente
+- Mantener la documentación actualizada
+- Incluir ejemplos reales del proyecto
+- Seguir las convenciones de código existentes
