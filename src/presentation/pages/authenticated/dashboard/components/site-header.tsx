@@ -10,6 +10,7 @@ import {
   navigationMenuTriggerStyle,
 } from "@presentation/components/ui/navigation-menu";
 import { CircleCheckIcon, CircleHelpIcon, CircleIcon } from "lucide-react";
+import { ModeToggle } from "@/presentation/components/ui/mode-toggle";
 import { Link } from "react-router-dom";
 
 const components: { title: string; href: string; description: string }[] = [
@@ -218,7 +219,9 @@ export function SiteHeader() {
           />
           <h1 className="text-base font-medium">Yaqu</h1>
         </div>
-        <div></div>
+        <div className="flex items-center gap-2 px-4 lg:px-6">
+          <ModeToggle />
+        </div>
       </header>
     </div>
   );
