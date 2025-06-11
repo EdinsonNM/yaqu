@@ -171,7 +171,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <img src="/logo.png" alt="" />
+        <img src="/logo.png" alt="Ridivi Logo" className="h-40 w-auto mx-auto mb-3 dark:hidden" />
+        <img src="/logo_dark.png" alt="Ridivi Logo Dark" className="h-40 w-auto mx-auto mb-3 hidden dark:block" />
         <TeamSwitcher teams={data.teams} />
       </SidebarHeader>
       <SidebarContent>

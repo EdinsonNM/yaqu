@@ -6,7 +6,10 @@ import {
   TableActionsObject,
 } from "@presentation/components/molecules/table/TableActions";
 
-export const columns = <T extends Commission>(actions: TableActionsObject<T>) => {
+export const columns = <T extends Commission>(
+  actions: TableActionsObject<T>,
+  onShowDetails: (item: T) => void
+) => {
   return [
     {
       accessorKey: "code",
@@ -17,7 +20,17 @@ export const columns = <T extends Commission>(actions: TableActionsObject<T>) =>
     {
       accessorKey: "name",
       header: "Nombre",
-      cell: (info) => info.getValue(),
+      cell: (info) => {
+        const row = info.row?.original as T;
+        return (
+          <button
+            className="text-black dark:text-white hover:underline"
+            onClick={() => onShowDetails(row)}
+          >
+            {String(info.getValue() ?? "")}
+          </button>
+        );
+      },
       enableSorting: true,
     },
     {

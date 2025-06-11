@@ -83,7 +83,8 @@ export default function LoginForm() {
       <div className="py-2 relative">
         {/* Logo de Ridivi centrado */}
         <div className="flex flex-col items-center mt-1 md:mt-10 mb-8 relative">
-          <img src="/carta_viva.png" alt="Ridivi Logo" className="h-36 mb-3" />
+          <img src="/logo.png" alt="Ridivi Logo" className="h-40 mb-3 dark:hidden" />
+          <img src="/logo_dark.png" alt="Ridivi Logo Dark" className="h-40 mb-3 hidden dark:block" />
 
           <div className="text-center">
             <p className="text-xl font-bold text-gray-600">

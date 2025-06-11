@@ -1,12 +1,13 @@
 import { lazy, Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
-import { Loading } from "@presentation/components/atoms/loading/loading";
-import { ChartAreaInteractive } from "./components/chart-area-interactive";
-import { PadronRoutes } from "../padron/padron.routes";
-import { AdministrationRoutes } from "../administration/administration.routes";
+import { LoadingPage } from "@presentation/components/loading-page/loading-page";
+
+const ChartAreaInteractive = lazy(() => import("./components/chart-area-interactive").then(module => ({ default: module.ChartAreaInteractive })));
+const PadronRoutes = lazy(() => import("../padron/padron.routes").then(module => ({ default: module.PadronRoutes })));
+const AdministrationRoutes = lazy(() => import("../administration/administration.routes").then(module => ({ default: module.AdministrationRoutes })));
 
 const DashboardRoutes = () => (
-  <Suspense fallback={<Loading />}>
+  <Suspense fallback={<LoadingPage />}>
     <Routes>
       <Route path="/" element={<ChartAreaInteractive />} />
       <Route path="/administration/*" element={<AdministrationRoutes />} />

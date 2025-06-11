@@ -88,6 +88,11 @@ const CommissionsList = () => {
     },
   };
 
+  const onShowDetails = (commission: Commission) => {
+    setSelectedCommission(commission);
+    modalDetailCommission.openModal();
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -99,7 +104,7 @@ const CommissionsList = () => {
 
       <DataTable
         data={commissions}
-        columns={columns(actions)}
+        columns={columns(actions, onShowDetails)}
         onAdd={() => modalNewCommission.openModal()}
       />
 

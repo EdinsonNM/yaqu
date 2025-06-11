@@ -5,13 +5,12 @@ import { AuthProvider } from "@presentation/utils/contexts/auth/auth.context";
 import { Loading } from "@presentation/components/atoms/loading/loading";
 import { ForbiddenPage } from "@presentation/components/templates/forbidden/forbidden.page";
 import { RoleName } from "@domain/authentication/enums/role.enum";
+import Dashboard from "@presentation/pages/authenticated/dashboard/dashboard";
 
 const Login = lazy(
   () => import("@presentation/pages/unauthenticated/login/login")
 );
-const Dashboard = lazy(
-  () => import("@presentation/pages/authenticated/dashboard/dashboard")
-);
+
 const ResetPassword = lazy(
   () =>
     import("@presentation/pages/unauthenticated/reset-password/reset-password")
