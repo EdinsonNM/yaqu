@@ -35,7 +35,7 @@ const CommissionDetail = ({
 
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
-    googleMapsApiKey: "AIzaSyAZuaAVnFvTJiS53-vxoQVu-F0_JMgMbjc",
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
   });
 
   // For demonstration purposes, generate a random location near Peru if none exists
